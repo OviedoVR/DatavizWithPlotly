@@ -339,28 +339,6 @@ fig.update_traces(marker=custom_marker_style)
 fig.show()
 ```
 
-```{python}
-# Criando o gráfico:
-fig = px.strip(
-    tips,
-    y='tip',
-    color='day',
-    color_discrete_sequence = color_discrete_sequence
-)
-
-# Layout e título:
-fig.update_layout(
-    custom_layout,
-    title='<b>Tips by day and smoking habits<b>', 
-    title_x=0.1,
-)
-# Marcador
-fig.update_traces(marker=custom_marker_style)
-
-# Resultado:
-fig.show()
-```
-
 ::: {.callout-note title="Dica"}
 Você pode usar a opção `facet_col` na criação dos gráficos e adicionar mais uma coluna (e.g., `smoker`), aumentando assim o nível de detalhe.
 :::
