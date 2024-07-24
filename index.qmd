@@ -1,0 +1,365 @@
+---
+title: "Visualização de dados com Plotly"
+author: "Vinícius Oviedo"
+date: today
+lang: "pt-BR"
+format:
+  bookup-html+lightonly:
+    embed-fonts: true
+    toc: true
+---
+
+## Objetivo
+
+A biblioteca `plotly` é uma biblioteca de visualização de dados disponível para **Python**. Se trata de uma biblioteca fantástica, pois permite interatividade do usuário com o gráfico. No entanto, para trabalhar com um *design* mais amigável , podemos dar um toque de customização sobre o layout padrão - isso é feito por meio de um arquivo `.py`. 
+
+Nesse documento, exploramos alguns gráficos que são baseados nessa customizção do layout do `plotly` e que podem, portanto, serem utilizados para produzir visualizações de alto impacto.
+
+## Utilizando um custom layout
+
+O `plotly` vem com uma série de opções padrões e templates no que tange ao aspecto layout - para mais informações, ver [documentação oficial](https://plotly.com/python/). Pensando em  implementar um *deisgn* próprio, podemos carregar o arquivo `custom_layout.py` disponível no link abaixo. Basicamente, este arquivo contém configurações quanto a fontes, eixos, paleta de cores, marcadores, etc.
+
+```python
+!wget -q 'https://raw.githubusercontent.com/OviedoVR/DatavizWithPlotly/main/custom_layout.py' -O 'custom_layout.py'
+```
+
+::: {.callout-tip title="Dica"}
+Você pode alterar esse estilo como desejar, além de definir a paleta de cores com base nas opções de cores disponíveis no plotly, ou buscando qualquer código HTML para utilizar com seus gráficos (dica: buscar por HTML Color Codes).
+:::
+
+Antes de plotar qualquer gráfico, vamos carregas as bibliotecas necessárias.
+
+```{python}
+# -- Manipulação de dados:
+import pandas as pd
+
+# -- Visualização:
+import seaborn as sns
+import plotly.express as px
+# Layout customizado
+from custom_layout import *
+```
+
+::: {.callout-note title="Nota"}
+Se você estiver rodando na sua máquina ou em ferramentas online como o **Google Colab**, não é necessário executar o próximo bloco de código.
+:::
+
+```{python, echo=FALSE}
+# -- Renderização em Quarto:
+import plotly.io as pio
+pio.renderers.default = "notebook"
+```
+
+### Gráficos
+
+Neste material, iremos abordar alguns tipos de gráficos, a saber:
+
+1. Gráfico de linhas
+2. Gráfico de barras
+3. Gráfico de dispersão (scatter)
+4. Histograma 
+5. Boxplot
+6. Stripplot
+7. Mapa de calor (heatmap)
+
+Para isso, vamos carregar o dataset `tips` (gorjetas) da biblioteca **Seaborn**:
+
+```{python}
+tips = sns.load_dataset('tips')
+tips.head()
+```
+
+## 1. Gráfico de linhas
+
+Adicionando datas sequenciais para plotar um série temporal:
+
+```{python}
+# Defina a data de início
+start_date = '2024-01-01'
+
+# Gere uma série de datas sequenciais
+tips['date'] = pd.date_range(start=start_date, periods=244) 
+tips_time_series = tips.tail(30)
+```
+
+Visualização:
+
+```{python}
+# Criando o gráfico:
+fig = px.line(
+    tips_time_series,
+    x='date',
+    y='tip',
+    color='sex',
+    color_discrete_sequence = ['silver', '#673147']
+)
+
+# Configurando layout e título:
+fig.update_layout(
+    custom_layout,
+    title='<b>Tips by customer<b>',
+    title_x=0.1
+)
+
+# Resultado:
+fig.show()
+```
+
+Suavizando as linhas do gráfico:
+
+```{python}
+# Criando o gráfico:
+fig = px.line(
+    tips_time_series,
+    x='date',
+    y='tip',
+    color='sex',
+    color_discrete_sequence = ['silver', '#673147']
+)
+
+# Suavizando as linhas:
+for trace in fig.data:
+  trace.update(mode='lines+markers', line_shape='spline')
+
+# Configurando layout e título:
+fig.update_layout(
+    custom_layout,
+    title='<b>Tips by customer<b>',
+    title_x=0.1
+)
+
+# Resulado:
+fig.show()
+```
+
+## 2. Gráfico de barras
+
+```{python}
+# Craindo o gráfico:
+fig = px.bar(
+    tips,
+    x='tip',
+    y='sex',
+    color_discrete_sequence = ['#673147']
+)
+ 
+# Layout e tamanho: 
+fig.update_traces(marker_line_width = 0) # sem sub-linhas
+fig.update_layout(custom_layout, width=500, height=220)
+
+# Resultado:
+fig.show()
+```
+
+> Modo da barra: `group` (agrupado)
+
+```{python}
+# Craindo o gráfico:
+fig = px.bar(
+    tips,
+    x='tip',
+    y='sex',
+    color='time',
+    barmode='group',
+    color_discrete_sequence = ['silver', '#673147']
+)
+ 
+# Layout e tamanho:
+fig.update_traces(marker_line_width = 0) # sem sub-linhas
+fig.update_layout(custom_layout, width=500, height=220)
+
+# Resultado:
+fig.show()
+```
+
+> Modo da barra: `stack` (empilhado)
+
+```{python}
+# Craindo o gráfico:
+fig = px.bar(
+    tips,
+    x='tip',
+    y='sex',
+    color='time',
+    barmode='stack',
+    color_discrete_sequence = ['silver', '#673147']
+)
+ 
+# Layout e tamanho:
+fig.update_traces(marker_line_width = 0) # sem sub-linhas
+fig.update_layout(custom_layout, width=500, height=220)
+
+# Resultado:
+fig.show()
+```
+
+
+## 3. Gráfico de dispersão
+
+```{python}
+# Criando o gráfico:
+fig = px.scatter(
+  tips,
+  x='total_bill',
+  y='tip',
+  color_discrete_sequence = ['#673147']
+)
+
+# Layout:
+fig.update_layout(
+  custom_layout,
+  title='<b>Conta versus Gorjeta<b>',
+  title_x=0.1
+)
+# Layout dos marcadores:
+fig.update_traces(marker=custom_marker_style)
+
+# Resultado:
+fig.show() 
+```
+
+Com mais de uma categoria:
+
+```{python}
+# Criando o gráfico:
+fig = px.scatter(
+  tips,
+  x='total_bill',
+  y='tip',
+  size='total_bill',
+  color = 'time',
+  color_discrete_sequence = ['silver', '#673147']
+)
+
+# Layout:
+fig.update_layout(
+  custom_layout,
+  title='<b>Conta versus Gorjeta<b>',
+  title_x=0.1
+)
+# Layout dos marcadores:
+fig.update_traces(marker=custom_marker_style)
+
+# Resultado:
+fig.show() 
+```
+
+## 4. Histograma
+
+```{python}
+# Criando o gráfico
+fig = px.histogram(
+    tips,
+    x='tip',
+    color='sex',
+    color_discrete_sequence = ['silver', '#673147'],
+)
+
+# Layout e título:
+fig.update_layout(
+    custom_layout,
+    title='<b>Tips by customer<b>', 
+    title_x=0.1
+)
+
+# Resultado:
+fig.show()
+```
+
+
+## 5. Boxplot
+
+```{python}
+# Criando o gráfico
+fig = px.box(
+    tips,
+    y='tip',
+    color='sex',
+    color_discrete_sequence = ['silver', '#673147'],
+)
+
+# Layout e título:
+fig.update_layout(
+    custom_layout,
+    title='<b>Tips by customer<b>', 
+    title_x=0.1,
+    boxgap=0.75
+)
+
+# Resultado:
+fig.show()
+```
+
+Mais categorias:
+
+```{python}
+# Criando o gráfico:
+fig = px.box(
+    tips,
+    y='total_bill',
+    color='day',
+    color_discrete_sequence = color_discrete_sequence
+)
+
+# Layout e título:
+fig.update_layout(
+    custom_layout,
+    title='<b>Total bill by customer<b>', 
+    title_x=0.1,
+    boxgap=0.7
+)
+# Marcador
+fig.update_traces(marker=custom_marker_style)
+
+# Resultado:
+fig.show()
+```
+
+## 6. Stripplot
+
+```{python}
+# Criando o gráfico:
+fig = px.strip(
+    tips,
+    y='tip',
+    color='day',
+    color_discrete_sequence = color_discrete_sequence
+)
+
+# Layout e título:
+fig.update_layout(
+    custom_layout,
+    title='<b>Tips by customer<b>', 
+    title_x=0.1
+)
+# Marcador
+fig.update_traces(marker=custom_marker_style)
+
+# Resultado:
+fig.show()
+```
+
+## 7. Mapa de calor (heatmap)
+
+```{python}
+# Calculando correlações para colunas numéricas
+corr = tips.select_dtypes(include='number').corr(method='spearman')
+
+# Criando o gráfico:
+fig = px.imshow(corr, text_auto=True, color_continuous_scale='RdBu_r')
+
+# Layout e título:
+fig.update_layout(custom_layout, title='Heamap (matriz de correlação)', title_x=0.5)
+
+# Resuldado:
+fig.show()
+```
+
+<br>
+
+## Informações sobre o autor
+---
+
+**Vinícius Oviedo** | Data Analyst & LaTeX editor
+
+[![GitHub Badge](https://img.shields.io/badge/-GitHub-black?&logo=GitHub&link=https://github.com/OviedoVR)](https://www.github.com/OviedoVR) [![Linkedin Badge](https://img.shields.io/badge/-Linkedin-0A66C2?&logo=Linkedin&link=https://www.linkedin.com/in/vinicius-oviedo/)](https://www.linkedin.com/in/vinicius-oviedo/) [![Medium Badge](https://img.shields.io/badge/-Medium-black?&logo=Medium&link=https://medium.com/@vo.freelancer5)](https://medium.com/@vo.freelancer5/) [![Youtube Badge](https://img.shields.io/badge/-Youtube-red?&logo=YouTube&link=www.youtube.com/channel/UCRc8ff3KUnY47j5sLJHDzSQ)](https://www.youtube.com/channel/UCRc8ff3KUnY47j5sLJHDzSQ) [![Fiverr Badge](https://img.shields.io/badge/-Fiverr_profile-charcoal?&link=https://www.fiverr.com/freelancer_vo)](https://www.fiverr.com/freelancer_vo) [![Upwork Badge](https://img.shields.io/badge/-Upwork_profile-gray?&logo=Upwork&link=https://www.upwork.com/freelancers/~0159ceec532c3ee8ae)](https://www.upwork.com/freelancers/~0159ceec532c3ee8ae)

@@ -1,0 +1,19 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "DataViz com Plotly"
+  navbar:
+    background: "#2e3f58"
+
+format:
+  bookup-html+lightonly:
+    embed-fonts: true
+    css: styles.css
+    toc: true
+    code-tools: true
+    code-overflow: wrap
+execute:
+  warning: false
+jupyter: python3

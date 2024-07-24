@@ -1,0 +1,149 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Visualização de dados com Plotly",
+    "section": "",
+    "text": "A biblioteca plotly é uma biblioteca de visualização de dados disponível para Python. Se trata de uma biblioteca fantástica, pois permite interatividade do usuário com o gráfico. No entanto, para trabalhar com um design mais amigável , podemos dar um toque de customização sobre o layout padrão - isso é feito por meio de um arquivo .py.\nNesse documento, exploramos alguns gráficos que são baseados nessa customizção do layout do plotly e que podem, portanto, serem utilizados para produzir visualizações de alto impacto."
+  },
+  {
+    "objectID": "index.html#objetivo",
+    "href": "index.html#objetivo",
+    "title": "Visualização de dados com Plotly",
+    "section": "",
+    "text": "A biblioteca plotly é uma biblioteca de visualização de dados disponível para Python. Se trata de uma biblioteca fantástica, pois permite interatividade do usuário com o gráfico. No entanto, para trabalhar com um design mais amigável , podemos dar um toque de customização sobre o layout padrão - isso é feito por meio de um arquivo .py.\nNesse documento, exploramos alguns gráficos que são baseados nessa customizção do layout do plotly e que podem, portanto, serem utilizados para produzir visualizações de alto impacto."
+  },
+  {
+    "objectID": "index.html#utilizando-um-custom-layout",
+    "href": "index.html#utilizando-um-custom-layout",
+    "title": "Visualização de dados com Plotly",
+    "section": "Utilizando um custom layout",
+    "text": "Utilizando um custom layout\nO plotly vem com uma série de opções padrões e templates no que tange ao aspecto layout - para mais informações, ver documentação oficial. Pensando em implementar um deisgn próprio, podemos carregar o arquivo custom_layout.py disponível no link abaixo. Basicamente, este arquivo contém configurações quanto a fontes, eixos, paleta de cores, marcadores, etc.\n!wget -q 'https://raw.githubusercontent.com/OviedoVR/DatavizWithPlotly/main/custom_layout.py' -O 'custom_layout.py'\n\n\n\n\n\n\nDica\n\n\n\nVocê pode alterar esse estilo como desejar, além de definir a paleta de cores com base nas opções de cores disponíveis no plotly, ou buscando qualquer código HTML para utilizar com seus gráficos (dica: buscar por HTML Color Codes).\n\n\nAntes de plotar qualquer gráfico, vamos carregas as bibliotecas necessárias.\n\n# -- Manipulação de dados:\nimport pandas as pd\n\n# -- Visualização:\nimport seaborn as sns\nimport plotly.express as px\n# Layout customizado\nfrom custom_layout import *\n\n\n\n\n\n\n\nNota\n\n\n\nSe você estiver rodando na sua máquina ou em ferramentas online como o Google Colab, não é necessário executar o próximo bloco de código.\n\n\n\n# -- Renderização em Quarto:\nimport plotly.io as pio\npio.renderers.default = \"notebook\"\n\n\nGráficos\nNeste material, iremos abordar alguns tipos de gráficos, a saber:\n\nGráfico de linhas\nGráfico de barras\nGráfico de dispersão (scatter)\nHistograma\nBoxplot\nStripplot\nMapa de calor (heatmap)\n\nPara isso, vamos carregar o dataset tips (gorjetas) da biblioteca Seaborn:\n\ntips = sns.load_dataset('tips')\ntips.head()\n\n\n\n\n\n\n\n\ntotal_bill\ntip\nsex\nsmoker\nday\ntime\nsize\n\n\n\n\n0\n16.99\n1.01\nFemale\nNo\nSun\nDinner\n2\n\n\n1\n10.34\n1.66\nMale\nNo\nSun\nDinner\n3\n\n\n2\n21.01\n3.50\nMale\nNo\nSun\nDinner\n3\n\n\n3\n23.68\n3.31\nMale\nNo\nSun\nDinner\n2\n\n\n4\n24.59\n3.61\nFemale\nNo\nSun\nDinner\n4"
+  },
+  {
+    "objectID": "index.html#gráfico-de-linhas",
+    "href": "index.html#gráfico-de-linhas",
+    "title": "Visualização de dados com Plotly",
+    "section": "1. Gráfico de linhas",
+    "text": "1. Gráfico de linhas\nAdicionando datas sequenciais para plotar um série temporal:\n\n# Defina a data de início\nstart_date = '2024-01-01'\n\n# Gere uma série de datas sequenciais\ntips['date'] = pd.date_range(start=start_date, periods=244) \ntips_time_series = tips.tail(30)\n\nVisualização:\n\n# Criando o gráfico:\nfig = px.line(\n    tips_time_series,\n    x='date',\n    y='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147']\n)\n\n# Configurando layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;',\n    title_x=0.1\n)\n\n# Resultado:\nfig.show()\n\n                                                \n\n\nSuavizando as linhas do gráfico:\n\n# Criando o gráfico:\nfig = px.line(\n    tips_time_series,\n    x='date',\n    y='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147']\n)\n\n# Suavizando as linhas:\nfor trace in fig.data:\n  trace.update(mode='lines+markers', line_shape='spline')\n\n# Configurando layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;',\n    title_x=0.1\n)\n\n# Resulado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#gráfico-de-barras",
+    "href": "index.html#gráfico-de-barras",
+    "title": "Visualização de dados com Plotly",
+    "section": "2. Gráfico de barras",
+    "text": "2. Gráfico de barras\n\n# Craindo o gráfico:\nfig = px.bar(\n    tips,\n    x='tip',\n    y='sex',\n    color_discrete_sequence = ['#673147']\n)\n \n# Layout e tamanho: \nfig.update_traces(marker_line_width = 0) # sem sub-linhas\nfig.update_layout(custom_layout, width=500, height=220)\n\n# Resultado:\nfig.show()\n\n                                                \n\n\n\nModo da barra: group (agrupado)\n\n\n# Craindo o gráfico:\nfig = px.bar(\n    tips,\n    x='tip',\n    y='sex',\n    color='time',\n    barmode='group',\n    color_discrete_sequence = ['silver', '#673147']\n)\n \n# Layout e tamanho:\nfig.update_traces(marker_line_width = 0) # sem sub-linhas\nfig.update_layout(custom_layout, width=500, height=220)\n\n# Resultado:\nfig.show()\n\n                                                \n\n\n\nModo da barra: stack (empilhado)\n\n\n# Craindo o gráfico:\nfig = px.bar(\n    tips,\n    x='tip',\n    y='sex',\n    color='time',\n    barmode='stack',\n    color_discrete_sequence = ['silver', '#673147']\n)\n \n# Layout e tamanho:\nfig.update_traces(marker_line_width = 0) # sem sub-linhas\nfig.update_layout(custom_layout, width=500, height=220)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#gráfico-de-dispersão",
+    "href": "index.html#gráfico-de-dispersão",
+    "title": "Visualização de dados com Plotly",
+    "section": "3. Gráfico de dispersão",
+    "text": "3. Gráfico de dispersão\n\n# Criando o gráfico:\nfig = px.scatter(\n  tips,\n  x='total_bill',\n  y='tip',\n  color_discrete_sequence = ['#673147']\n)\n\n# Layout:\nfig.update_layout(\n  custom_layout,\n  title='&lt;b&gt;Conta versus Gorjeta&lt;b&gt;',\n  title_x=0.1\n)\n# Layout dos marcadores:\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show() \n\n                                                \n\n\nCom mais de uma categoria:\n\n# Criando o gráfico:\nfig = px.scatter(\n  tips,\n  x='total_bill',\n  y='tip',\n  size='total_bill',\n  color = 'time',\n  color_discrete_sequence = ['silver', '#673147']\n)\n\n# Layout:\nfig.update_layout(\n  custom_layout,\n  title='&lt;b&gt;Conta versus Gorjeta&lt;b&gt;',\n  title_x=0.1\n)\n# Layout dos marcadores:\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#histograma",
+    "href": "index.html#histograma",
+    "title": "Visualização de dados com Plotly",
+    "section": "4. Histograma",
+    "text": "4. Histograma\n\n# Criando o gráfico\nfig = px.histogram(\n    tips,\n    x='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147'],\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;', \n    title_x=0.1\n)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#boxplot",
+    "href": "index.html#boxplot",
+    "title": "Visualização de dados com Plotly",
+    "section": "5. Boxplot",
+    "text": "5. Boxplot\n\n# Criando o gráfico\nfig = px.box(\n    tips,\n    y='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147'],\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;', \n    title_x=0.1,\n    boxgap=0.75\n)\n\n# Resultado:\nfig.show()\n\n                                                \n\n\nMais categorias:\n\n# Criando o gráfico:\nfig = px.box(\n    tips,\n    y='total_bill',\n    color='day',\n    color_discrete_sequence = color_discrete_sequence\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Total bill by customer&lt;b&gt;', \n    title_x=0.1,\n    boxgap=0.7\n)\n# Marcador\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#stripplot",
+    "href": "index.html#stripplot",
+    "title": "Visualização de dados com Plotly",
+    "section": "6. Stripplot",
+    "text": "6. Stripplot\n\n# Criando o gráfico:\nfig = px.strip(\n    tips,\n    y='tip',\n    color='day',\n    color_discrete_sequence = color_discrete_sequence\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;', \n    title_x=0.1\n)\n# Marcador\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#mapa-de-calor-heatmap",
+    "href": "index.html#mapa-de-calor-heatmap",
+    "title": "Visualização de dados com Plotly",
+    "section": "7. Mapa de calor (heatmap)",
+    "text": "7. Mapa de calor (heatmap)\n\n# Calculando correlações para colunas numéricas\ncorr = tips.select_dtypes(include='number').corr(method='spearman')\n\n# Criando o gráfico:\nfig = px.imshow(corr, text_auto=True, color_continuous_scale='RdBu_r')\n\n# Layout e título:\nfig.update_layout(custom_layout, title='Heamap (matriz de correlação)', title_x=0.5)\n\n# Resuldado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#informações-sobre-o-autor",
+    "href": "index.html#informações-sobre-o-autor",
+    "title": "Visualização de dados com Plotly",
+    "section": "Informações sobre o autor",
+    "text": "Informações sobre o autor\n\nVinícius Oviedo | Data Analyst & LaTeX editor"
+  },
+  {
+    "objectID": "index.html#objetivo-1",
+    "href": "index.html#objetivo-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "Objetivo",
+    "text": "Objetivo\nA biblioteca plotly é uma biblioteca de visualização de dados disponível para Python. Se trata de uma biblioteca fantástica, pois permite interatividade do usuário com o gráfico. No entanto, para trabalhar com um design mais amigável , podemos dar um toque de customização sobre o layout padrão - isso é feito por meio de um arquivo .py.\nNesse documento, exploramos alguns gráficos que são baseados nessa customizção do layout do plotly e que podem, portanto, serem utilizados para produzir visualizações de alto impacto."
+  },
+  {
+    "objectID": "index.html#utilizando-um-custom-layout-1",
+    "href": "index.html#utilizando-um-custom-layout-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "Utilizando um custom layout",
+    "text": "Utilizando um custom layout\nO plotly vem com uma série de opções padrões e templates no que tange ao aspecto layout - para mais informações, ver documentação oficial. Pensando em implementar um deisgn próprio, podemos carregar o arquivo custom_layout.py disponível no link abaixo. Basicamente, este arquivo contém configurações quanto a fontes, eixos, paleta de cores, marcadores, etc.\n!wget -q 'https://raw.githubusercontent.com/OviedoVR/DatavizWithPlotly/main/custom_layout.py' -O 'custom_layout.py'\n\n\n\n\n\n\nDica\n\n\n\nVocê pode alterar esse estilo como desejar, além de definir a paleta de cores com base nas opções de cores disponíveis no plotly, ou buscando qualquer código HTML para utilizar com seus gráficos (dica: buscar por HTML Color Codes).\n\n\nAntes de plotar qualquer gráfico, vamos carregas as bibliotecas necessárias.\n# -- Manipulação de dados:\nimport pandas as pd\n\n# -- Visualização:\nimport seaborn as sns\nimport plotly.express as px\n# Layout customizado\nfrom custom_layout import *\n\n\n\n\n\n\nNota\n\n\n\nSe você estiver rodando na sua máquina ou em ferramentas online como o Google Colab, não é necessário executar o próximo bloco de código.\n\n\n{python, echo=FALSE} # -- Renderização em Quarto: import plotly.io as pio pio.renderers.default = \"notebook\"\n\nGráficos\nNeste material, iremos abordar alguns tipos de gráficos, a saber:\n\nGráfico de linhas\nGráfico de barras\nGráfico de dispersão (scatter)\nHistograma\nBoxplot\nStripplot\nMapa de calor (heatmap)\n\nPara isso, vamos carregar o dataset tips (gorjetas) da biblioteca Seaborn:\ntips = sns.load_dataset('tips')\ntips.head()"
+  },
+  {
+    "objectID": "index.html#gráfico-de-linhas-1",
+    "href": "index.html#gráfico-de-linhas-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "1. Gráfico de linhas",
+    "text": "1. Gráfico de linhas\nAdicionando datas sequenciais para plotar um série temporal:\n# Defina a data de início\nstart_date = '2024-01-01'\n\n# Gere uma série de datas sequenciais\ntips['date'] = pd.date_range(start=start_date, periods=244) \ntips_time_series = tips.tail(30)\nVisualização:\n# Criando o gráfico:\nfig = px.line(\n    tips_time_series,\n    x='date',\n    y='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147']\n)\n\n# Configurando layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;',\n    title_x=0.1\n)\n\n# Resultado:\nfig.show()\nSuavizando as linhas do gráfico:\n# Criando o gráfico:\nfig = px.line(\n    tips_time_series,\n    x='date',\n    y='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147']\n)\n\n# Suavizando as linhas:\nfor trace in fig.data:\n  trace.update(mode='lines+markers', line_shape='spline')\n\n# Configurando layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;',\n    title_x=0.1\n)\n\n# Resulado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#gráfico-de-barras-1",
+    "href": "index.html#gráfico-de-barras-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "2. Gráfico de barras",
+    "text": "2. Gráfico de barras\n# Craindo o gráfico:\nfig = px.bar(\n    tips,\n    x='tip',\n    y='sex',\n    color_discrete_sequence = ['#673147']\n)\n \n# Layout e tamanho: \nfig.update_traces(marker_line_width = 0) # sem sub-linhas\nfig.update_layout(custom_layout, width=500, height=220)\n\n# Resultado:\nfig.show()\n\nModo da barra: group (agrupado)\n\n# Craindo o gráfico:\nfig = px.bar(\n    tips,\n    x='tip',\n    y='sex',\n    color='time',\n    barmode='group',\n    color_discrete_sequence = ['silver', '#673147']\n)\n \n# Layout e tamanho:\nfig.update_traces(marker_line_width = 0) # sem sub-linhas\nfig.update_layout(custom_layout, width=500, height=220)\n\n# Resultado:\nfig.show()\n\nModo da barra: stack (empilhado)\n\n# Craindo o gráfico:\nfig = px.bar(\n    tips,\n    x='tip',\n    y='sex',\n    color='time',\n    barmode='stack',\n    color_discrete_sequence = ['silver', '#673147']\n)\n \n# Layout e tamanho:\nfig.update_traces(marker_line_width = 0) # sem sub-linhas\nfig.update_layout(custom_layout, width=500, height=220)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#gráfico-de-dispersão-1",
+    "href": "index.html#gráfico-de-dispersão-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "3. Gráfico de dispersão",
+    "text": "3. Gráfico de dispersão\n# Criando o gráfico:\nfig = px.scatter(\n  tips,\n  x='total_bill',\n  y='tip',\n  color_discrete_sequence = ['#673147']\n)\n\n# Layout:\nfig.update_layout(\n  custom_layout,\n  title='&lt;b&gt;Conta versus Gorjeta&lt;b&gt;',\n  title_x=0.1\n)\n# Layout dos marcadores:\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show() \nCom mais de uma categoria:\n# Criando o gráfico:\nfig = px.scatter(\n  tips,\n  x='total_bill',\n  y='tip',\n  size='total_bill',\n  color = 'time',\n  color_discrete_sequence = ['silver', '#673147']\n)\n\n# Layout:\nfig.update_layout(\n  custom_layout,\n  title='&lt;b&gt;Conta versus Gorjeta&lt;b&gt;',\n  title_x=0.1\n)\n# Layout dos marcadores:\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#histograma-1",
+    "href": "index.html#histograma-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "4. Histograma",
+    "text": "4. Histograma\n# Criando o gráfico\nfig = px.histogram(\n    tips,\n    x='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147'],\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;', \n    title_x=0.1\n)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#boxplot-1",
+    "href": "index.html#boxplot-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "5. Boxplot",
+    "text": "5. Boxplot\n# Criando o gráfico\nfig = px.box(\n    tips,\n    y='tip',\n    color='sex',\n    color_discrete_sequence = ['silver', '#673147'],\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;', \n    title_x=0.1,\n    boxgap=0.75\n)\n\n# Resultado:\nfig.show()\nMais categorias:\n# Criando o gráfico:\nfig = px.box(\n    tips,\n    y='total_bill',\n    color='day',\n    color_discrete_sequence = color_discrete_sequence\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Total bill by customer&lt;b&gt;', \n    title_x=0.1,\n    boxgap=0.7\n)\n# Marcador\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#stripplot-1",
+    "href": "index.html#stripplot-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "6. Stripplot",
+    "text": "6. Stripplot\n# Criando o gráfico:\nfig = px.strip(\n    tips,\n    y='tip',\n    color='day',\n    color_discrete_sequence = color_discrete_sequence\n)\n\n# Layout e título:\nfig.update_layout(\n    custom_layout,\n    title='&lt;b&gt;Tips by customer&lt;b&gt;', \n    title_x=0.1\n)\n# Marcador\nfig.update_traces(marker=custom_marker_style)\n\n# Resultado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#mapa-de-calor-heatmap-1",
+    "href": "index.html#mapa-de-calor-heatmap-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "7. Mapa de calor (heatmap)",
+    "text": "7. Mapa de calor (heatmap)\n# Calculando correlações para colunas numéricas\ncorr = tips.select_dtypes(include='number').corr(method='spearman')\n\n# Criando o gráfico:\nfig = px.imshow(corr, text_auto=True, color_continuous_scale='RdBu_r')\n\n# Layout e título:\nfig.update_layout(custom_layout, title='Heamap (matriz de correlação)', title_x=0.5)\n\n# Resuldado:\nfig.show()"
+  },
+  {
+    "objectID": "index.html#informações-sobre-o-autor-1",
+    "href": "index.html#informações-sobre-o-autor-1",
+    "title": "Visualização de dados com Plotly",
+    "section": "## Informações sobre o autor",
+    "text": "## Informações sobre o autor\nVinícius Oviedo | Data Analyst & LaTeX editor"
+  }
+]
