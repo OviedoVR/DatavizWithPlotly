@@ -352,7 +352,10 @@ def update_facet_axes(fig):
     fig.update_xaxes(showgrid=False, showline=True, linecolor='lightgray', tickcolor='lightgray')
     fig.update_yaxes(showgrid=False, showline=True, linecolor='lightgray', tickcolor='lightgray')
     return fig
+```
+Como exemplo de uso, teríamos:
 
+```python
 # Exemplo de uso:
 fig = update_facet_axes(fig)
 fig.show()
