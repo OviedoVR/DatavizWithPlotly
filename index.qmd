@@ -343,6 +343,21 @@ fig.show()
 Você pode usar a opção `facet_col` na criação dos gráficos e adicionar mais uma coluna (e.g., `smoker`), aumentando assim o nível de detalhe.
 :::
 
+Nesse caso, o outro eixo do `facet` ficará com a linha do eixo e os ticks em preto. Logo, você pode usar:
+
+```python
+# Função para customizar os facets:
+def update_facet_axes(fig):
+    # Atualizar todos os eixos de facetas
+    fig.update_xaxes(showgrid=False, showline=True, linecolor='lightgray', tickcolor='lightgray')
+    fig.update_yaxes(showgrid=False, showline=True, linecolor='lightgray', tickcolor='lightgray')
+    return fig
+
+# Exemplo de uso:
+fig = update_facet_axes(fig)
+fig.show()
+```
+
 ## 7. Mapa de calor (heatmap)
 
 ```{python}
