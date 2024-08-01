@@ -19,7 +19,7 @@ custom_layout = {
 px.defaults.template = 'simple_white'
 
 # Defining a color palette:
-color_discrete_sequence = ['#ff9f1c', '#086375', '#47D45A', '#a4133c', '#61CBF4', '#3c1642']
+color_discrete_sequence = ['#3c1642', '#086375', '#47D45A', '#a4133c', '#61CBF4', '#ff9f1c']
 
 # Create a custom marker style dictionary
 custom_marker_style = {
